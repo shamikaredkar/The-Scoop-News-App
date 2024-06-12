@@ -1,6 +1,6 @@
 # The-Scoop-News-App
 
-![The-Scoop-News-App]()
+![The-Scoop-News-App](https://github.com/shamikaredkar/The-Scoop-News-App/blob/main/Preview.png)
 
 ## Purpose
 The Scoop is a web application that allows users to search for news articles from various sources. Users can navigate through the articles using pagination and see the results of their search queries displayed dynamically.
