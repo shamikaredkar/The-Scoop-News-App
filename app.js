@@ -1,3 +1,4 @@
+const corsProxy = 'http://localhost:3000/cors?url=';
 const apiKey = '85ead0abb1bb4b00814bf943ce31466c';
 
 const container = document.querySelector('.container');
