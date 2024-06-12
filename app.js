@@ -1,4 +1,5 @@
-const newsapi = new NewsAPI('YOUR_API_KEY', { corsProxyUrl: 'https://cors-anywhere.herokuapp.com/' });
+const apiKey = 'Om2ysTErw9ButoztUcQg4MUYWRLRPcmUfw8l6vSF'; // Your API token
+const apiEndpoint = 'https://api.thenewsapi.com/v1/news/top'; // The News API endpoint
 
 const container = document.querySelector('.container');
 const dateElement = document.querySelector('#date');
@@ -24,26 +25,24 @@ function createUniqueKey(article) {
 
 // FETCH API
 async function getNews(query = 'latest', page = 1) {
+    const url = `${apiEndpoint}?api_token=${apiKey}&locale=us&search=${query}&page=${page}&limit=9`;
+
     try {
-        const response = await newsapi.v2.everything({
-            q: query,
-            from: '2024-05-12',
-            sortBy: 'publishedAt',
-            language: 'en',
-            page: page,
-            pageSize: 9
-        });
-        const data = response;
+        const res = await fetch(url);
+        if (!res.ok) {
+            throw new Error(`Error: ${res.status}`);
+        }
+        const data = await res.json();
         console.log(data);
-        
+
         // Clear the current container and seenArticles set only if it's a new search
         if (page === 1) {
             container.innerHTML = '';
             seenArticles.clear();
         }
 
-        if (data.articles && data.articles.length) {
-            data.articles.forEach(article => {
+        if (data.data && data.data.length) {
+            data.data.forEach(article => {
                 const uniqueKey = createUniqueKey(article);
 
                 // Check if the article has already been seen
@@ -61,9 +60,9 @@ async function getNews(query = 'latest', page = 1) {
                     const figure = document.createElement('figure');
                     figure.classList.add('image', 'is-4by3');
                     
-                    if (article.urlToImage) {
+                    if (article.image_url) {
                         const image = document.createElement('img');
-                        image.src = article.urlToImage;
+                        image.src = article.image_url;
                         image.alt = article.title;
                         figure.appendChild(image);
                     }
@@ -97,7 +96,7 @@ async function getNews(query = 'latest', page = 1) {
 
                     const content = document.createElement('div');
                     content.classList.add('content');
-                    content.textContent = article.description; // Use description instead of content
+                    content.textContent = article.description;
 
                     const readMore = document.createElement('a');
                     readMore.href = article.url;
@@ -106,13 +105,13 @@ async function getNews(query = 'latest', page = 1) {
                     readMore.classList.add('read-more');
 
                     const time = document.createElement('time');
-                    time.setAttribute('datetime', article.publishedAt);
-                    time.textContent = new Date(article.publishedAt).toLocaleString();
+                    time.setAttribute('datetime', article.published_at);
+                    time.textContent = new Date(article.published_at).toLocaleString();
                     time.classList.add('article-time');
 
                     cardContent.appendChild(content);
-                    cardContent.appendChild(readMore); // Append read more link
-                    cardContent.appendChild(time); // Append time below read more link
+                    cardContent.appendChild(readMore);
+                    cardContent.appendChild(time);
                     card.appendChild(cardContent);
 
                     cardWrapper.appendChild(card);
@@ -121,7 +120,7 @@ async function getNews(query = 'latest', page = 1) {
             });
 
             // Update totalPages
-            totalPages = Math.ceil(data.totalResults / 9);
+            totalPages = Math.ceil(data.meta.total_pages);
             updatePagination();
         }
     } catch (e) {
@@ -153,7 +152,7 @@ searchButton.addEventListener('click', () => {
     if (search) {
         currentQuery = search;
         currentPage = 1;
-        searchQueryElement.textContent = `Search Results for "${search}"`; // Update the H3 element with the search query
+        searchQueryElement.textContent = `Search Results for "${search}"`;
         getNews(currentQuery, currentPage);
         searchInput.value = '';
     }
@@ -178,6 +177,7 @@ nextButton.addEventListener('click', (event) => {
 
 // Fetch initial news on page load
 getNews(currentQuery, currentPage);
+
 
 
 
