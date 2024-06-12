@@ -1,4 +1,4 @@
-const corsProxy = 'http://localhost:3000/cors?url=';
+const proxyUrl = "https://cors-anywhere.herokuapp.com/";
 const apiKey = '85ead0abb1bb4b00814bf943ce31466c';
 
 const container = document.querySelector('.container');
@@ -8,7 +8,6 @@ const searchInput = document.querySelector('#search-input');
 const prevButton = document.querySelector('#prev-button');
 const nextButton = document.querySelector('#next-button');
 const searchQueryElement = document.querySelector('#search-query');
-
 
 let currentPage = 1;
 let currentQuery = 'latest';
@@ -26,8 +25,14 @@ function createUniqueKey(article) {
 
 // FETCH API
 async function getNews(query = 'latest', page = 1) {
+    const url = `${proxyUrl}https://newsapi.org/v2/everything?q=${query}&from=2024-05-12&sortBy=publishedAt&language=en&page=${page}&pageSize=9&apiKey=${apiKey}`;
+    const request = new Request(url);
+
     try {
-        const res = await fetch(`https://newsapi.org/v2/everything?q=${query}&from=2024-05-12&sortBy=publishedAt&language=en&page=${page}&pageSize=9&apiKey=${apiKey}`);
+        const res = await fetch(request);
+        if (!res.ok) {
+            throw new Error(`Error: ${res.status}`);
+        }
         const data = await res.json();
         console.log(data);
         
@@ -148,7 +153,7 @@ searchButton.addEventListener('click', () => {
     if (search) {
         currentQuery = search;
         currentPage = 1;
-        searchQueryElement.textContent = `Showing Results for "${search}"`; // Update the H3 element with the search query
+        searchQueryElement.textContent = `Search Results for "${search}"`; // Update the H3 element with the search query
         getNews(currentQuery, currentPage);
         searchInput.value = '';
     }
@@ -173,6 +178,7 @@ nextButton.addEventListener('click', (event) => {
 
 // Fetch initial news on page load
 getNews(currentQuery, currentPage);
+
 
 
 
