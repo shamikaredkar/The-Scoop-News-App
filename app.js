@@ -1,5 +1,4 @@
-const proxyUrl = "https://cors-anywhere.herokuapp.com/";
-const apiKey = '85ead0abb1bb4b00814bf943ce31466c';
+const newsapi = new NewsAPI('YOUR_API_KEY', { corsProxyUrl: 'https://cors-anywhere.herokuapp.com/' });
 
 const container = document.querySelector('.container');
 const dateElement = document.querySelector('#date');
@@ -25,15 +24,16 @@ function createUniqueKey(article) {
 
 // FETCH API
 async function getNews(query = 'latest', page = 1) {
-    const url = `${proxyUrl}https://newsapi.org/v2/everything?q=${query}&from=2024-05-12&sortBy=publishedAt&language=en&page=${page}&pageSize=9&apiKey=${apiKey}`;
-    const request = new Request(url);
-
     try {
-        const res = await fetch(request);
-        if (!res.ok) {
-            throw new Error(`Error: ${res.status}`);
-        }
-        const data = await res.json();
+        const response = await newsapi.v2.everything({
+            q: query,
+            from: '2024-05-12',
+            sortBy: 'publishedAt',
+            language: 'en',
+            page: page,
+            pageSize: 9
+        });
+        const data = response;
         console.log(data);
         
         // Clear the current container and seenArticles set only if it's a new search
@@ -178,6 +178,7 @@ nextButton.addEventListener('click', (event) => {
 
 // Fetch initial news on page load
 getNews(currentQuery, currentPage);
+
 
 
 
