@@ -1,37 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Scoop</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/newsapi"></script>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header></header>
     <div class="columns m-4 p-4">
       <div class="column is-two-thirds">
         <p class="title is-2">The Scoop</p>
-        <p class="subtitle is-4">Stay informed, Stay ahead...</p>
+        <p class="subtitle is-4">Stay informed, stay ahead...</p>
         <p id="date" class="subtitle is-6"></p>
       </div>
       <div class="column">
         <div class="level-item">
           <div class="field has-addons">
             <p class="control is-expanded">
-              <input
-                id="search-input"
-                class="input"
-                type="text"
-                placeholder="Search News.."
-              />
+              <input id="search-input" class="input" type="text" placeholder="Search News..">
             </p>
             <p class="control">
               <button id="search-button" class="button">Search</button>
@@ -40,19 +30,11 @@
         </div>
       </div>
     </div>
-    <h3 id="search-query" class="title is-3 has-text-centered"></h3>
-
     <!-- STORE cards of news -->
     <div class="container"></div>
-    <!-- Pagination Controls -->
-    <nav
-      class="pagination is-right m-4"
-      role="navigation"
-      aria-label="pagination"
-    >
-      <a href="#" class="pagination-previous" id="prev-button">Previous</a>
-      <a href="#" class="pagination-next" id="next-button">Next page</a>
-    </nav>
+    <footer>Shamika Redkar</footer>
+
     <script src="app.js"></script>
   </body>
 </html>
+
