@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Scoop</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/newsapi"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header></header>
@@ -21,7 +26,12 @@
         <div class="level-item">
           <div class="field has-addons">
             <p class="control is-expanded">
-              <input id="search-input" class="input" type="text" placeholder="Search News..">
+              <input
+                id="search-input"
+                class="input"
+                type="text"
+                placeholder="Search News.."
+              />
             </p>
             <p class="control">
               <button id="search-button" class="button">Search</button>
@@ -30,9 +40,18 @@
         </div>
       </div>
     </div>
+    <h3 id="search-query"></h3>
     <!-- STORE cards of news -->
     <div class="container"></div>
-    <footer>Shamika Redkar</footer>
+
+    <nav
+      class="pagination is-right m-4"
+      role="navigation"
+      aria-label="pagination"
+    >
+      <a href="#" id="prev-button" class="pagination-previous">Previous</a>
+      <a href="#" id="next-button" class="pagination-next">Next page</a>
+    </nav>
 
     <script src="app.js"></script>
   </body>
