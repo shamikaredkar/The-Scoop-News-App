@@ -1,6 +1,6 @@
 # The-Scoop-News-App
 
-![The-Scoop-News-App](https://github.com/shamikaredkar/The-Scoop-News-App/blob/main/Preview.png)
+![The-Scoop-News-App](https://github.com/shamikaredkar/The-Scoop-News-App/blob/main/image.png)
 
 ## Purpose
 The Scoop is a web application that allows users to search for TV shows from various sources. Users can navigate through the shows using pagination and see the results of their search queries displayed dynamically.
