@@ -9,7 +9,7 @@ const nextButton = document.querySelector('#next-button');
 const searchQueryElement = document.querySelector('#search-query');
 
 let currentPage = 1;
-let currentQuery = 'game'; // Default query
+let currentQuery = 'space'; // Default query
 let totalPages = 0;
 const itemsPerPage = 9; // Set the number of items per page
 const seenShows = new Set(); // Set to keep track of unique shows
