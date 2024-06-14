@@ -3,6 +3,8 @@
     grid-template-columns: repeat(3, 1fr);
     /* Ensure 3 cards per row */
     gap: 1rem;
+    margin-top: 2rem;
+    /* Ensure there's space above the container */
 }
 
 .card {
@@ -43,15 +45,6 @@
     font-size: 0.875rem;
     color: #666;
 }
-
-footer {
-    background-color: gray;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .date {
     background-color: white;
     color: black;
@@ -71,4 +64,12 @@ footer {
     z-index: 1;
     border-color: white;
     /* Ensure the card is above others when hovered */
+}
+
+/* Disabled pagination button styles */
+.pagination-previous.is-disabled,
+.pagination-next.is-disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
