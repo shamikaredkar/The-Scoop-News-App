@@ -1,4 +1,4 @@
-const apiKey = '85ead0abb1bb4b00814bf943ce31466c';
+const apiUrl = 'https://api.tvmaze.com/search/shows?q=';
 
 const container = document.querySelector('.container');
 const dateElement = document.querySelector('#date');
@@ -9,112 +9,138 @@ const nextButton = document.querySelector('#next-button');
 const searchQueryElement = document.querySelector('#search-query');
 
 let currentPage = 1;
-let currentQuery = 'latest';
+let currentQuery = 'game'; // Default query
 let totalPages = 0;
-const seenArticles = new Set();
+const itemsPerPage = 9; // Set the number of items per page
+const seenShows = new Set(); // Set to keep track of unique shows
 
 // FETCH TODAY'S DATE
 const date = new Date();
 dateElement.textContent = date.toDateString();
 
-// Helper function to create a unique key for each article
-function createUniqueKey(article) {
-    return `${article.url}-${article.title}`;
+// Helper function to create a unique key for each show
+function createUniqueKey(show) {
+    return `${show.id}-${show.name}`;
+}
+
+// Helper function to truncate text to a certain number of words
+function truncateText(text, wordLimit) {
+    const words = text.split(' ');
+    if (words.length > wordLimit) {
+        return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return text;
 }
 
 // FETCH API
-async function getNews(query = 'latest', page = 1) {
+async function getShows(query = 'space', page = 1) {
     try {
-        const res = await fetch(`https://newsapi.org/v2/everything?q=${query}&from=2024-05-12&sortBy=publishedAt&language=en&page=${page}&pageSize=9&apiKey=${apiKey}`);
+        const res = await fetch(`${apiUrl}${query}&page=${page}`);
+        if (!res.ok) {
+            throw new Error(`Error: ${res.status}`);
+        }
         const data = await res.json();
         console.log(data);
-        
-        // Clear the current container and seenArticles set only if it's a new search
+
+        // Clear the current container and seenShows set only if it's a new search
         if (page === 1) {
             container.innerHTML = '';
-            seenArticles.clear();
+            seenShows.clear();
         }
 
-        if (data.articles && data.articles.length) {
-            data.articles.forEach(article => {
-                const uniqueKey = createUniqueKey(article);
-
-                // Check if the article has already been seen
-                if (!seenArticles.has(uniqueKey)) {
-                    seenArticles.add(uniqueKey);
-
-                    const cardWrapper = document.createElement('div');
-                    cardWrapper.classList.add('card-wrapper');
-
-                    const card = document.createElement('div');
-                    card.classList.add('card');
-
-                    const cardImage = document.createElement('div');
-                    cardImage.classList.add('card-image');
-                    const figure = document.createElement('figure');
-                    figure.classList.add('image', 'is-4by3');
-                    
-                    if (article.urlToImage) {
-                        const image = document.createElement('img');
-                        image.src = article.urlToImage;
-                        image.alt = article.title;
-                        figure.appendChild(image);
-                    }
-
-                    cardImage.appendChild(figure);
-                    card.appendChild(cardImage);
-
-                    const cardContent = document.createElement('div');
-                    cardContent.classList.add('card-content');
-
-                    const media = document.createElement('div');
-                    media.classList.add('media');
-
-                    const mediaContent = document.createElement('div');
-                    mediaContent.classList.add('media-content');
-                    
-                    const title = document.createElement('p');
-                    title.classList.add('title', 'is-4');
-                    title.textContent = article.title;
-                    mediaContent.appendChild(title);
-
-                    if (article.author) {
-                        const subtitle = document.createElement('p');
-                        subtitle.classList.add('subtitle', 'is-6');
-                        subtitle.textContent = `@${article.author}`;
-                        mediaContent.appendChild(subtitle);
-                    }
-
-                    media.appendChild(mediaContent);
-                    cardContent.appendChild(media);
-
-                    const content = document.createElement('div');
-                    content.classList.add('content');
-                    content.textContent = article.description; // Use description instead of content
-
-                    const readMore = document.createElement('a');
-                    readMore.href = article.url;
-                    readMore.textContent = 'Read More';
-                    readMore.target = '_blank';
-                    readMore.classList.add('read-more');
-
-                    const time = document.createElement('time');
-                    time.setAttribute('datetime', article.publishedAt);
-                    time.textContent = new Date(article.publishedAt).toLocaleString();
-                    time.classList.add('article-time');
-
-                    cardContent.appendChild(content);
-                    cardContent.appendChild(readMore); // Append read more link
-                    cardContent.appendChild(time); // Append time below read more link
-                    card.appendChild(cardContent);
-
-                    cardWrapper.appendChild(card);
-                    container.appendChild(cardWrapper);
+        if (data && data.length) {
+            data.forEach(item => {
+                const show = item.show;
+                if (!show || !show.id || !show.name) {
+                    // Skip this item if id or name is missing
+                    return;
                 }
+                const uniqueKey = createUniqueKey(show);
+
+                // Check if the show has already been seen
+                if (seenShows.has(uniqueKey)) {
+                    return;
+                }
+                seenShows.add(uniqueKey);
+
+                const cardWrapper = document.createElement('div');
+                cardWrapper.classList.add('card-wrapper');
+
+                const card = document.createElement('div');
+                card.classList.add('card');
+
+                const cardImage = document.createElement('div');
+                cardImage.classList.add('card-image');
+                const figure = document.createElement('figure');
+                figure.classList.add('image', 'is-4by3');
+
+                if (show.image && show.image.medium) {
+                    const image = document.createElement('img');
+                    image.src = show.image.medium;
+                    image.alt = show.name;
+                    image.onerror = () => {
+                        image.src = 'https://via.placeholder.com/300x300.png?text=No+Image';
+                    };
+                    figure.appendChild(image);
+                } else {
+                    const placeholderImage = document.createElement('img');
+                    placeholderImage.src = 'https://via.placeholder.com/300x300.png?text=No+Image';
+                    placeholderImage.alt = 'No Image Available';
+                    figure.appendChild(placeholderImage);
+                }
+
+                cardImage.appendChild(figure);
+                card.appendChild(cardImage);
+
+                const cardContent = document.createElement('div');
+                cardContent.classList.add('card-content');
+
+                const media = document.createElement('div');
+                media.classList.add('media');
+
+                const mediaContent = document.createElement('div');
+                mediaContent.classList.add('media-content');
+
+                const title = document.createElement('p');
+                title.classList.add('title', 'is-4');
+                title.textContent = show.name;
+                mediaContent.appendChild(title);
+
+                if (show.network && show.network.name) {
+                    const subtitle = document.createElement('p');
+                    subtitle.classList.add('subtitle', 'is-6');
+                    subtitle.textContent = `Network: ${show.network.name}`;
+                    mediaContent.appendChild(subtitle);
+                }
+
+                media.appendChild(mediaContent);
+                cardContent.appendChild(media);
+
+                const content = document.createElement('div');
+                content.classList.add('content');
+                const summary = show.summary ? show.summary.replace(/<\/?[^>]+(>|$)/g, "") : 'No description available.';
+                content.textContent = truncateText(summary, 40);
+
+                const readMore = document.createElement('a');
+                readMore.href = show.url;
+                readMore.textContent = 'Read More';
+                readMore.target = '_blank';
+                readMore.classList.add('read-more');
+
+                cardContent.appendChild(content);
+                cardContent.appendChild(readMore); // Append read more link
+                card.appendChild(cardContent);
+
+                cardWrapper.appendChild(card);
+                container.appendChild(cardWrapper);
             });
 
-            // Update totalPages
-            totalPages = Math.ceil(data.totalResults / 9);
+            // Update totalPages based on the data length
+            totalPages = Math.ceil(data.length / itemsPerPage);
+            updatePagination();
+        } else {
+            // Disable buttons if no data
+            totalPages = 0;
             updatePagination();
         }
     } catch (e) {
@@ -122,21 +148,36 @@ async function getNews(query = 'latest', page = 1) {
         const errorMessage = document.createElement('p');
         errorMessage.textContent = 'Error Occurred';
         container.appendChild(errorMessage);
+        // Disable buttons on error
+        totalPages = 0;
+        updatePagination();
     }
 }
 
 // Update Pagination
 function updatePagination() {
-    if (currentPage > 1) {
-        prevButton.classList.remove('is-disabled');
-    } else {
+    if (currentPage <= 1) {
         prevButton.classList.add('is-disabled');
+        prevButton.disabled = true;
+    } else {
+        prevButton.classList.remove('is-disabled');
+        prevButton.disabled = false;
     }
 
-    if (currentPage < totalPages) {
-        nextButton.classList.remove('is-disabled');
-    } else {
+    if (currentPage >= totalPages) {
         nextButton.classList.add('is-disabled');
+        nextButton.disabled = true;
+    } else {
+        nextButton.classList.remove('is-disabled');
+        nextButton.disabled = false;
+    }
+
+    // Disable both buttons if there are no more pages to show
+    if (totalPages <= 1) {
+        prevButton.classList.add('is-disabled');
+        nextButton.classList.add('is-disabled');
+        prevButton.disabled = true;
+        nextButton.disabled = true;
     }
 }
 
@@ -147,7 +188,7 @@ searchButton.addEventListener('click', () => {
         currentQuery = search;
         currentPage = 1;
         searchQueryElement.textContent = `Search Results for "${search}"`; // Update the H3 element with the search query
-        getNews(currentQuery, currentPage);
+        getShows(currentQuery, currentPage);
         searchInput.value = '';
     }
 });
@@ -157,7 +198,7 @@ prevButton.addEventListener('click', (event) => {
     event.preventDefault();
     if (currentPage > 1) {
         currentPage--;
-        getNews(currentQuery, currentPage);
+        getShows(currentQuery, currentPage);
     }
 });
 
@@ -165,12 +206,12 @@ nextButton.addEventListener('click', (event) => {
     event.preventDefault();
     if (currentPage < totalPages) {
         currentPage++;
-        getNews(currentQuery, currentPage);
+        getShows(currentQuery, currentPage);
     }
 });
 
-// Fetch initial news on page load
-getNews(currentQuery, currentPage);
+// Fetch initial shows on page load
+getShows(currentQuery, currentPage);
 
 
 
